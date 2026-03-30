@@ -76,6 +76,8 @@ class DocumentLoader:
             logger.error(f"❌ Failed to load {file_path.name}: {e}")
             raise
 
+
+        # Optional: early size validation (can also be done in router)
     def load_from_bytes(self, file_bytes: bytes, filename: str) -> List[Document]:
         """Load document from bytes safely and robustly (for FastAPI uploads)."""
         import tempfile
@@ -88,6 +90,11 @@ class DocumentLoader:
         unique_id = uuid.uuid4().hex
 
         logger.info(f"Loading from bytes: {safe_name}")
+
+        # --- FIX: These lines below were not indented correctly ---
+        # Optional: early size validation
+        if len(file_bytes) > 50 * 1024 * 1024:  # 50MB
+            raise ValueError(f"File too large: {len(file_bytes)} bytes")
 
         tmp_path: Path | None = None
 
@@ -122,3 +129,6 @@ class DocumentLoader:
                     logger.debug(f"Temporary file deleted: {tmp_path}")
             except Exception as cleanup_error:
                 logger.warning(f"Failed to delete temp file: {cleanup_error}")
+
+
+                
