@@ -786,6 +786,7 @@ dependencies = [
     { name = "fastapi" },
     { name = "langchain" },
     { name = "langchain-chroma" },
+    { name = "langchain-classic" },
     { name = "langchain-community" },
     { name = "langchain-core" },
     { name = "langchain-groq" },
@@ -805,8 +806,9 @@ dependencies = [
 requires-dist = [
     { name = "chromadb", specifier = ">=1.5.5" },
     { name = "fastapi", specifier = ">=0.135.1" },
-    { name = "langchain", specifier = ">=1.2.13" },
+    { name = "langchain", specifier = ">=0.3.0" },
     { name = "langchain-chroma", specifier = ">=1.1.0" },
+    { name = "langchain-classic", specifier = ">=1.0.3" },
     { name = "langchain-community", specifier = ">=0.4.1" },
     { name = "langchain-core", specifier = ">=1.2.20" },
     { name = "langchain-groq", specifier = ">=1.1.2" },

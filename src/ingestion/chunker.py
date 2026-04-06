@@ -1,4 +1,5 @@
-from typing import List
+from typing import List, Dict
+from uuid import uuid4
 
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_core.documents import Document
@@ -9,45 +10,59 @@ from src.config.settings import settings
 
 class DocumentChunker:
     """
-    Production-grade hybrid document chunker.
-    
-    Engineering Decisions:
-    - Uses RecursiveCharacterTextSplitter as primary (structure-aware)
-    - Configurable chunk_size and chunk_overlap from settings
-    - Preserves all metadata from loader
-    - Keeps separators logical (paragraphs → sentences → words)
-    - Ready for future semantic chunking enhancement
+    Hierarchical chunker for production RAG.
+    Creates both small chunks (for retrieval) and larger parent chunks (for summarization).
     """
 
     def __init__(self):
-        self.chunk_size = settings.CHUNK_SIZE          # e.g. 800
-        self.chunk_overlap = settings.CHUNK_OVERLAP    # e.g. 150
+        self.small_chunk_size = 600
+        self.small_overlap = 100
+        self.parent_chunk_size = 2000
+        self.parent_overlap = 200
 
-        self.text_splitter = RecursiveCharacterTextSplitter(
-            chunk_size=self.chunk_size,
-            chunk_overlap=self.chunk_overlap,
-            length_function=len,
-            separators=["\n\n", "\n", ". ", " ", ""],   # Logical hierarchy
-            is_separator_regex=False,
+        self.small_splitter = RecursiveCharacterTextSplitter(
+            chunk_size=self.small_chunk_size,
+            chunk_overlap=self.small_overlap,
+            separators=["\n\n", "\n", ". ", " ", ""],
+        )
+
+        self.parent_splitter = RecursiveCharacterTextSplitter(
+            chunk_size=self.parent_chunk_size,
+            chunk_overlap=self.parent_overlap,
+            separators=["\n\n", "\n", ". ", " ", ""],
         )
 
     def chunk_documents(self, documents: List[Document]) -> List[Document]:
-        """Split documents into smaller chunks while preserving metadata."""
-        logger.info(f"Chunking {len(documents)} documents | Chunk size={self.chunk_size}, Overlap={self.chunk_overlap}")
+        """Create hierarchical chunks."""
+        if not documents:
+            return []
 
-        chunked_docs = self.text_splitter.split_documents(documents)
+        # Filter out noise — elements shorter than 50 chars are headers/UI junk
+        documents = [
+            doc for doc in documents
+            if len(doc.page_content.strip()) >= 50
+        ]
+        logger.info(f"After filtering: {len(documents)} meaningful elements")
 
-        # Re-attach and enrich metadata
-        for i, doc in enumerate(chunked_docs):
-            doc.metadata.update({
-                "chunk_id": i,
-                "total_chunks": len(chunked_docs),
-                "chunk_size": len(doc.page_content),
-            })
+        logger.info(f"Creating hierarchical chunks from {len(documents)} elements")
 
-        logger.info(f"✅ Created {len(chunked_docs)} chunks from {len(documents)} original elements")
-        return chunked_docs
+        # Create small chunks for retrieval
+        small_chunks = self.small_splitter.split_documents(documents)
+
+        # Create parent chunks for summarization
+        parent_chunks = self.parent_splitter.split_documents(documents)
+
+        # Add parent_id to small chunks for hierarchical retrieval later
+        parent_map: Dict[str, Document] = {str(uuid4()): p for p in parent_chunks}
+
+        for small in small_chunks:
+            small.metadata["parent_id"] = list(parent_map.keys())[0]
+
+        all_chunks = small_chunks + parent_chunks
+
+        logger.info(f"✅ Created {len(small_chunks)} small chunks + {len(parent_chunks)} parent chunks")
+        return all_chunks
 
 
-# Singleton for easy use
+# Singleton
 chunker = DocumentChunker()

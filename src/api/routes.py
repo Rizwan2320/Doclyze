@@ -1,89 +1,83 @@
-from fastapi import APIRouter, UploadFile, File, HTTPException
-from loguru import logger
 from pathlib import Path
 from uuid import uuid4
+import tempfile
 
-from src.api.schemas import (
-    UploadAcceptedResponse,
-    IngestionStatus,
-    SupportedFileType,
-    compute_sha256,
-)
+from fastapi import APIRouter, UploadFile, File, HTTPException
+from loguru import logger
+
+from src.api.schemas import UploadAcceptedResponse, QueryRequest, QueryResponse, compute_sha256, SupportedFileType, IngestionStats, IngestionStatus
 from src.ingestion.service import ingestion_service
+from src.rag.chain import rag_chain
 
 router = APIRouter(prefix="/api", tags=["documents"])
 
 
 @router.post("/upload", response_model=UploadAcceptedResponse)
 async def upload_document(file: UploadFile = File(...)):
-    """
-    Upload a document and process it synchronously.
-    
-    This is the simplest and most reliable version for development.
-    We will switch to async + background tasks later when the system is more stable.
-    """
-    # ── Basic validation ─────────────────────────────────────────────────────
-    if not file.filename:
-        raise HTTPException(status_code=400, detail="Filename is required")
-
+    # Validate extension
     file_ext = Path(file.filename).suffix.lower()
+    allowed = {e.value for e in SupportedFileType}
+    if file_ext not in allowed:
+        raise HTTPException(status_code=400, detail=f"Unsupported file type. Allowed: {allowed}")
 
-    if file_ext not in [ext.value for ext in SupportedFileType]:
-        raise HTTPException(
-            status_code=400,
-            detail=f"Unsupported file type: {file_ext}. Allowed types: {[e.value for e in SupportedFileType]}"
-        )
-
-    # Read file content
+    # Read bytes
     content = await file.read()
 
-    if len(content) == 0:
-        raise HTTPException(status_code=400, detail="Uploaded file is empty")
+    if len(content) > 50 * 1024 * 1024:
+        raise HTTPException(status_code=400, detail="File too large. Max 50MB.")
 
-    if len(content) > 50 * 1024 * 1024:  # 50 MB limit
-        raise HTTPException(status_code=400, detail="File too large. Maximum allowed size is 50MB.")
-
-    # Generate document_id and hash for integrity + deduplication
     document_id = uuid4()
-    content_sha256 = compute_sha256(content)
+    sha256 = compute_sha256(content)
 
-    logger.info(f"Upload received → {file.filename} | size={len(content)} bytes | document_id={document_id}")
+    logger.info(f"Upload received: {file.filename} | {len(content)} bytes | id={document_id}")
 
-    # ── Process ingestion synchronously ─────────────────────────────────────
+    # Save to temp file and ingest
     try:
-        chunks = ingestion_service.ingest_from_bytes(
-            content=content,
-            filename=file.filename,
-            document_id=document_id,
-        )
+        with tempfile.NamedTemporaryFile(delete=False, suffix=file_ext) as tmp:
+            tmp.write(content)
+            tmp_path = tmp.name
 
-        logger.info(f"Successfully ingested {file.filename} → {len(chunks)} chunks created")
-
-        return UploadAcceptedResponse(
-            document_id=document_id,
-            filename=file.filename,
-            content_sha256=content_sha256,
-            status=IngestionStatus.SUCCESS,
-            status_url=f"/api/status/{document_id}",
-            message=f"Document uploaded and ingested successfully. Created {len(chunks)} chunks.",
-        )
+        chunks = ingestion_service.ingest_file(tmp_path)
 
     except Exception as e:
-        logger.error(f"Ingestion failed for {file.filename}: {str(e)}", exc_info=True)
-        raise HTTPException(
-            status_code=500,
-            detail=f"Failed to process document: {str(e)}"
-        )
+        logger.error(f"Ingestion failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Ingestion failed: {str(e)}")
+
+    finally:
+        Path(tmp_path).unlink(missing_ok=True)
+
+    return UploadAcceptedResponse(
+        document_id=document_id,
+        filename=file.filename,
+        content_sha256=sha256,
+        status=IngestionStatus.SUCCESS,
+        status_url=f"/api/status/{document_id}",
+        message=f"Ingested {len(chunks)} chunks successfully.",
+    )
 
 
-# Placeholder endpoints (we'll implement these later)
-@router.get("/status/{document_id}")
-async def get_ingestion_status(document_id: uuid4):
-    """Future endpoint to check ingestion status (polling)."""
-    raise HTTPException(status_code=501, detail="Status polling not implemented yet")
+@router.post("/query", response_model=QueryResponse)
+async def query_document(request: QueryRequest):
+    if not request.query.strip():
+        raise HTTPException(status_code=400, detail="Query cannot be empty.")
+
+    logger.info(f"Query received: '{request.query}'")
+
+    try:
+        answer = rag_chain.query(request.query, k=request.top_k)
+    except Exception as e:
+        logger.error(f"Query failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Query failed: {str(e)}")
+
+    return QueryResponse(answer=answer, sources=[])
 
 
-@router.post("/query")
-async def query_documents(request):
-    """Future RAG query endpoint."""
-    raise HTTPException(status_code=501, detail="Query endpoint not implemented yet")
+@router.post("/summarize")
+async def summarize_document():
+    try:
+        summary = rag_chain.summarize_document()
+    except Exception as e:
+        logger.error(f"Summarization failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+    return {"summary": summary}
