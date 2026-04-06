@@ -1,6 +1,4 @@
 chroma_db/
-
-
 # Python-generated files
 __pycache__/
 *.py[oc]
