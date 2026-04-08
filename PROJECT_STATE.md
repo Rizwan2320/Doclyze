@@ -2,35 +2,37 @@
 
 ## What Is Built & Working
 
-- Full ingestion pipeline: PDF → Unstructured (fast strategy) → filter noise → hierarchical chunker → ChromaDB
+- Full ingestion pipeline: PDF → PyMuPDF → filter noise → hierarchical chunker → ChromaDB
+- Document isolation: each upload gets its own ChromaDB collection (keyed by document_id)
 - Embeddings: sentence-transformers/all-MiniLM-L6-v2 (local, free)
-- RAG chain: similarity search (k=10) → Groq llama-3.3-70b-versatile → answer
-- FastAPI server with /api/upload, /api/query, /api/summarize endpoints
-- Swagger UI working at localhost:8000/docs
-- GitHub repo live: github.com/Rizwan2320/Doclyze
+- RAG chain: similarity search (k=15) → Groq llama-3.3-70b → answer
+- FastAPI: /api/upload, /api/query, /api/summarize all working
+- Swagger UI: localhost:8000/docs
+- GitHub: github.com/Rizwan2320/Doclyze
+- Tested on: Wikipedia PDF ✅, RAG paper (2-column academic PDF) ✅
 
-## Key Technical Decisions Made
+## Key Technical Decisions
 
-- Strategy=fast in loader (hi_res took 25 mins, unusable)
-- Filter chunks < 50 chars (removes browser-print noise)
-- No reranker yet (removed broken ContextualCompressionRetriever)
-- Hierarchical chunks: small (600 chars) + parent (2000 chars)
-- LangSmith disabled (LANGSMITH_TRACING=false in .env)
+- PyMuPDF (fitz) for PDF loading — Unstructured fast strategy missed content in 2-col PDFs
+- Filter chunks < 50 chars — removes browser-print/header noise
+- Hierarchical chunks: small (600) + parent (2000)
+- No reranker (removed broken ContextualCompressionRetriever)
+- LangSmith disabled (LANGSMITH_TRACING=false)
+- document_id used as ChromaDB collection_name for isolation
 
 ## What Remains for Doclyze
 
-1. Test on academic PDF (the RAG paper)
-2. Add evaluation — 5 test questions with expected answers
-3. Write proper README
-4. Deploy to Hugging Face Spaces
+1. Evaluation harness — 5 test Q&A pairs, scored objectively
+2. Write README
+3. Deploy to Hugging Face Spaces
 
 ## Known Issues
 
-- ingest_file() uses temp file — filename loses original name in metadata
-- sources: [] in QueryResponse (not populated yet)
-- No deduplication (uploading same file twice doubles chunks)
+- /api/query requires document_id — no default collection fallback
+- sources: [] not populated in QueryResponse
+- No deduplication on re-upload
 
 ## Stack
 
-Python 3.12, uv, FastAPI, LangChain, ChromaDB, Groq, Unstructured, Loguru
-Windows machine, VS Code
+Python 3.12, uv, FastAPI, LangChain, ChromaDB, PyMuPDF, Groq, Loguru
+Windows, VS Code
