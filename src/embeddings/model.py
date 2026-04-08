@@ -48,3 +48,5 @@ class EmbeddingModel:
 
 # Global singleton
 embedding_model = EmbeddingModel()
+
+embeddings = embedding_model.embeddings

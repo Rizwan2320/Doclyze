@@ -15,21 +15,20 @@ class IngestionService:
         self.loader = DocumentLoader()
         self.chunker = chunker
 
-    def ingest_file(self, file_path: str | Path) -> List[Document]:
-        """Load → chunk → save to vector store."""
+    def ingest_file(
+        self, file_path: str | Path, collection_name: str = "default"
+    ) -> List[Document]:
+        """Ingest a file and store its chunks in the vector store."""
         logger.info(f"Starting ingestion: {Path(file_path).name}")
 
-        # Step 1: Load
         raw_documents = self.loader.load_file(file_path)
-
-        # Step 2: Chunk
         chunks = self.chunker.chunk_documents(raw_documents)
 
-        # Step 3: Save to ChromaDB  ← this was missing
-        vector_store.add_documents(chunks)
-        logger.info(f"Saved {len(chunks)} chunks to ChromaDB")
+        vector_store.add_documents(chunks, collection_name=collection_name)
 
+        logger.info(f"Saved {len(chunks)} chunks to collection '{collection_name}'")
         return chunks
 
 
+# Singleton / global instance
 ingestion_service = IngestionService()
