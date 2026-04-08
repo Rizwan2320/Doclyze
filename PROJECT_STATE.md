@@ -36,3 +36,9 @@
 
 Python 3.12, uv, FastAPI, LangChain, ChromaDB, PyMuPDF, Groq, Loguru
 Windows, VS Code
+
+## Deployed
+
+- Live URL: https://rizwan444-doclyze.hf.space
+- Swagger UI: https://rizwan444-doclyze.hf.space/docs
+- Platform: Hugging Face Spaces (Docker)
