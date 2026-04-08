@@ -1,3 +1,4 @@
+import os
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from loguru import logger
@@ -66,13 +67,15 @@ async def health_check():
 if __name__ == "__main__":
     import uvicorn
 
+    port = int(os.environ.get("PORT", 7860))
+    host = os.environ.get("HOST", "0.0.0.0")
 
-    logger.info("Starting Uvicorn development server...")
-    
+    logger.info(f"Starting Uvicorn on {host}:{port}")
+
     uvicorn.run(
-        "src.main:app",      # Important: correct import path  uv run uvicorn src.main:app --reload
-        host="127.0.0.1",    # Change to "0.0.0.0" only when deploying
-        port=8000,
-        reload=True,         # Auto-reload on code changes (perfect for dev)
+        "src.main:app",
+        host=host,
+        port=port,
+        reload=False,
         log_level=settings.LOG_LEVEL.lower(),
     )

@@ -1,3 +1,12 @@
+---
+title: Doclyze
+emoji: 📄
+colorFrom: blue
+colorTo: green
+sdk: docker
+pinned: false
+---
+
 # Doclyze — AI Document Analysis Portal
 
 Upload any PDF and ask questions about it. Powered by RAG (Retrieval-Augmented Generation).
