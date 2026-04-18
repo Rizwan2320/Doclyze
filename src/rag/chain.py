@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Tuple
 
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
@@ -20,7 +20,7 @@ class RAGChain:
         )
 
         self.prompt = ChatPromptTemplate.from_template(
-                """You are a helpful research assistant. Answer the question based on the context below.
+            """You are a helpful research assistant. Answer the question based on the context below.
 Use the information available in the context. If the context only partially addresses the question, answer based on what is there.
 Only say you cannot answer if the context has absolutely no relevant information.
 
@@ -42,24 +42,25 @@ Answer:"""
 
     def query(
         self, question: str, k: int = 15, collection_name: str = "default"
-    ) -> str:
-        """Query the RAG chain with a question."""
-        logger.info(f"Query: '{question}' | k={k} | collection={collection_name}")
-
+    ) -> Tuple[str, List]:
+        """Query the RAG system and return answer + retrieved documents."""
         docs = vector_store.similarity_search(
             question, k=k, collection_name=collection_name
         )
+
         logger.info(f"Docs retrieved: {len(docs)}")
         for i, d in enumerate(docs[:2]):
-               logger.info(f"Doc {i}: {repr(d.page_content[:100])}")
+            logger.info(f"Doc {i}: {repr(d.page_content[:100])}")
 
         if not docs:
-            return "I could not find the answer in the document."
+            return "I could not find the answer in the document.", []
 
         context = self.format_docs(docs)
 
         chain = self.prompt | self.llm | StrOutputParser()
-        return chain.invoke({"context": context, "question": question})
+        answer = chain.invoke({"context": context, "question": question})
+
+        return answer, docs
 
     def summarize_document(self, collection_name: str = "default") -> str:
         """Summarize the documents in a collection."""
