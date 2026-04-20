@@ -36,7 +36,11 @@ class VectorStore:
         self, query: str, k: int = 10, collection_name: str = "default"
     ):
         store = self._get_vectorstore(collection_name)
-        results = store.similarity_search_with_relevance_scores(query, k=k)
+        results = store.similarity_search_with_relevance_scores(
+               query,
+               k=k,
+               filter={"chunk_type": {"$eq": "child"}}
+        )
 
         docs = []
         for item in results:

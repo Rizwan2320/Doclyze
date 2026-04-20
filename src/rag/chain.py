@@ -10,7 +10,6 @@ from src.vectorstore.chroma import vector_store
 
 
 class RAGChain:
-
     def __init__(self):
         self.llm = ChatGroq(
             model=settings.GROQ_MODEL,
@@ -19,18 +18,21 @@ class RAGChain:
             api_key=settings.GROQ_API_KEY.get_secret_value(),
         )
 
-        self.prompt = ChatPromptTemplate.from_template(
-            """You are a helpful research assistant. Answer the question based on the context below.
-Use the information available in the context. If the context only partially addresses the question, answer based on what is there.
-Only say you cannot answer if the context has absolutely no relevant information.
+        self.prompt = ChatPromptTemplate.from_messages([
+            ("system", """You are an expert technical research assistant.
+Your task is to answer the user's question using ONLY the provided context.
+Synthesize the information into a clear, concise, and professional answer.
 
-Context:
+CRITICAL RULES:
+1. NEVER mention the word "Chunk" or include the raw "[Chunk X | Page Y]" tags in your answer.
+2. If the context does not contain the answer, simply say "I cannot answer this based on the provided document." Do not guess.
+3. Do not include introductory filler like "Based on the context..."
+"""),
+            ("human", """Context:
 {context}
 
-Question: {question}
-
-Answer:"""
-        )
+Question: {question}""")
+        ])
 
     def format_docs(self, docs: List) -> str:
         """Format documents with chunk number and page info."""

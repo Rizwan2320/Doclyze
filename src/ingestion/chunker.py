@@ -49,10 +49,11 @@ class DocumentChunker:
         # Create parent chunks for summarization/context
         parent_chunks = self.parent_splitter.split_documents(documents)
 
-        # Add unique ID to each parent chunk
+        # Add unique ID and chunk_type to each parent chunk
         for parent in parent_chunks:
             if "id" not in parent.metadata:
                 parent.metadata["id"] = str(uuid4())
+            parent.metadata["chunk_type"] = "parent"
 
         # Create small chunks for retrieval, linked to their parent
         small_chunks: List[Document] = []
@@ -65,8 +66,9 @@ class DocumentChunker:
                 child_doc = Document(
                     page_content=child_text,
                     metadata={
-                        **parent.metadata,           # inherit all parent metadata
-                        "parent_id": parent.metadata["id"],  # link to parent
+                        **parent.metadata,           # inherit parent metadata
+                        "parent_id": parent.metadata["id"],
+                        "chunk_type": "child",       # explicitly set as child for retrieval
                     }
                 )
                 small_chunks.append(child_doc)

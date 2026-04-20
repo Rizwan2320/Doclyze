@@ -1,0 +1,221 @@
+[
+  {
+    "id": "q01",
+    "category": "factual",
+    "question": "What two model variants does RAG introduce?",
+    "expected_answer": "RAG-Sequence and RAG-Token. RAG-Sequence uses the same retrieved document to generate the complete output sequence, while RAG-Token can use a different retrieved document for each output token.",
+    "actual_answer": "(\nsim(q, z)\n)\nwhere sim(q, z) is the similarity between the input query q and the candidate document z. The\nsimilarity function is based on the dot product of the query and document embeddings.\n2.3\nGenerator: BART\nThe generator component p\u03b8(y|x, z, y1:i\u22121) is based on BART [27]. BART is a denoising\nsequence-to-sequence model that uses a novel technique called \u201ctext infilling\u201d for pre-training. The\ngenerator takes the input query x, the retrieved document z, and the previously generated tokens\ny1:i\u22121 as input, and outputs the next token yi.\n\n[Chunk 8 | Page 5]\nRAG-Token and RAG-Sequence are two variants of the RAG model. RAG-Token generates tokens\none at a time, while RAG-Sequence generates the entire sequence at once. The two variants differ in\nthe way they compute the probability of the target sequence y given the input x. RAG-Token uses the\nfollowing formula:\npRAG-Token(y|x) \u2248\nN\nY\ni\nX\nz\u2208top-k(p(\u00b7|x))\np\u03b7(z|x)p\u03b8(yi|x, z, y1:i\u22121)\nOn the other hand, RAG-Sequence uses the following formula:\npRAG-Token(y|x) \u2248\nN\nY\ni\nX\nz\u2208top-k(p(\u00b7|x))\np\u03b7(z|x)p\u03b8(y|x, z)\nThe main difference between the two variants is that RAG-Token generates tokens one at a time,\nwhile RAG-Sequence generates the entire sequence at once.\n\n[Chunk 9 | Page 11]\nThe RAG model is based on two main components: a retriever and a generator. The retriever is\nresponsible for retrieving relevant documents from a large corpus, while the generator is responsible\nfor generating the final output based on the retrieved documents. The retriever uses a bi-encoder\narchitecture, which consists of two encoders: a query encoder and a document encoder. The query\nencoder encodes the input query into a vector representation, while the document encoder encodes the\ndocuments in the corpus into vector representations. The similarity between the query and document\nrepresentations is then computed using a dot product, and the top-k most similar documents are\nretrieved.\n\n[Chunk 10 | Page 12]\nThe generator component of the RAG model is based on a denoising sequence-to-sequence model,\nwhich uses a novel technique called \u201ctext infilling\u201d for pre-training. The generator takes the input\nquery, the retrieved document, and the previously generated tokens as input, and outputs the next\ntoken. The generator is trained using a combination of masked language modeling and next sentence\nprediction objectives.\n\n[Chunk 11 | Page 13]\nThe RAG model can be used for a variety of natural language processing tasks, including question\nanswering, text generation, and sequence classification. The model can be fine-tuned for specific tasks\nby adjusting the retriever and generator components. For example, the retriever can be fine-tuned to\nretrieve documents that are more relevant to the task at hand, while the generator can be fine-tuned to\ngenerate more accurate and informative responses.\n\n[Chunk 12 | Page 14]\nIn this work, we propose a new model called RAG, which combines a retriever and a generator to\ngenerate text. The retriever is responsible for retrieving relevant documents from a large corpus, while\nthe generator is responsible for generating the final output based on the retrieved documents. We\nevaluate the RAG model on a variety of natural language processing tasks, including question answering,\ntext generation, and sequence classification. Our results show that the RAG model outperforms\nstate-of-the-art models on several tasks, including question answering and text generation.\n\n[Chunk 13 | Page 15]\nWe also investigate the effectiveness of the retrieval component of the RAG model. We find that the\nretrieval component is effective in retrieving relevant documents, and that the quality of the retrieved\ndocuments has a significant impact on the performance of the model. We also find that the retrieval\ncomponent can be updated without requiring any retraining of the model, by simply replacing the\nretrieval index with a new one.\n\n[Chunk 14 | Page 16]\nThe RAG model has several advantages over existing models. It can generate more accurate and\ninformative responses, and it can be fine-tuned for specific tasks. The model also has the flexibility to\nadjust the number of retrieved documents at test time, which can affect performance and runtime. We\nalso find that the model can be used for a variety of natural language processing tasks, including\nquestion answering, text generation, and sequence classification.\n\n[Chunk 15 | Page 18]\nIn conclusion, the RAG model is a powerful tool for natural language processing tasks. It combines a\nretriever and a generator to generate text, and it has several advantages over existing models. The model\ncan generate more accurate and informative responses, and it can be fine-tuned for specific tasks. We\nbelieve that the RAG model has the potential to be widely used in a variety of applications, including\nquestion answering, text generation, and sequence classification.",
+    "expected_pages": [
+      3
+    ],
+    "retrieved_pages": [
+      10,
+      17,
+      7,
+      8,
+      6
+    ],
+    "page_recall": 1.0,
+    "top_score": 0.546,
+    "avg_score": 0.3243,
+    "latency_ms": 8221.1,
+    "num_sources": 10
+  },
+  {
+    "id": "q02",
+    "category": "factual",
+    "question": "Which pre-trained seq2seq model does RAG use as its generator component?",
+    "expected_answer": "BART-large, a pre-trained seq2seq transformer with 400M parameters.",
+    "actual_answer": "BART (mentioned in Chunk 8) is the pre-trained seq2seq model used as the generator component in RAG.",
+    "expected_pages": [
+      3
+    ],
+    "retrieved_pages": [
+      1,
+      3,
+      10,
+      1,
+      5
+    ],
+    "page_recall": 1.0,
+    "top_score": 0.4269,
+    "avg_score": 0.3597,
+    "latency_ms": 2937.9,
+    "num_sources": 10
+  },
+  {
+    "id": "q03",
+    "category": "factual",
+    "question": "How many documents does Wikipedia get split into for RAG's non-parametric memory index?",
+    "expected_answer": "21 million documents. Each Wikipedia article is split into disjoint 100-word chunks.",
+    "actual_answer": "21M documents. Each Wikipedia article is split into disjoint 100-word chunks to make a total of 21M documents.",
+    "expected_pages": [
+      4
+    ],
+    "retrieved_pages": [
+      4,
+      2,
+      17,
+      8,
+      17
+    ],
+    "page_recall": 1.0,
+    "top_score": 0.6117,
+    "avg_score": 0.4538,
+    "latency_ms": 2530.7,
+    "num_sources": 10
+  },
+  {
+    "id": "q04",
+    "category": "multi-section",
+    "question": "How does RAG-Sequence compare to BART on the MS-MARCO and Jeopardy question generation tasks, and what human evaluation evidence supports this?",
+    "expected_answer": "On MS-MARCO, RAG-Sequence outperforms BART by 2.6 BLEU and 2.6 Rouge-L points. On Jeopardy question generation, both RAG variants outperform BART on Q-BLEU-1. Human evaluators found RAG more factual than BART in 42.7% of cases vs. only 7.1% where BART was more factual, and more specific by a large margin.",
+    "actual_answer": "RAG-Sequence performs better than BART on the Jeopardy question generation task, as shown in Table 2, where it outperforms BART on Q-BLEU-1. Human evaluation results also indicate that RAG generations are more factual and specific than BART generations. However, the context does not provide a direct comparison between RAG-Sequence and BART on the MS-MARCO task. It only mentions that RAG models can generate more specific and factually accurate responses on the MS-MARCO task, but it does not specify how RAG-Sequence compares to BART on this task.",
+    "expected_pages": [
+      6,
+      8
+    ],
+    "retrieved_pages": [
+      6,
+      6,
+      6,
+      5,
+      17
+    ],
+    "page_recall": 0.5,
+    "top_score": 0.8067,
+    "avg_score": 0.562,
+    "latency_ms": 2798.7,
+    "num_sources": 10
+  },
+  {
+    "id": "q05",
+    "category": "multi-section",
+    "question": "What is the total number of trainable parameters in a RAG model, and how does this compare to the best closed-book baseline on Natural Questions?",
+    "expected_answer": "According to Appendix G, RAG has a total of 626M trainable parameters: 110M from the BERT-base query encoder and 406M from BART-large (the document encoder is not trained). The paper explicitly states this 626M figure. The best closed-book model, T5-11B, has 11 billion parameters but achieves only 36.6 EM on Natural Questions with SSM pre-training, well below RAG-Sequence's 44.5 EM reported in Table 1.",
+    "actual_answer": "The total number of trainable parameters in a RAG model is 626M, which includes 110M parameters from the BERT-base query and document encoder of DPR, and 406M parameters from BART-large, and another 110M parameters from the BERT-base document encoder. \n\nIn comparison, the best performing \"closed-book\" (parametric only) open-domain QA model is T5-11B with 11 Billion trainable parameters. The T5 model with the closest number of parameters to the RAG models is T5-large (770M parameters), which achieves a score of 28.9 EM on Natural Questions, substantially below the 44.5 that RAG-Sequence achieves. This indicates that hybrid parametric/non-parametric models like RAG require far fewer trainable parameters for strong open-domain QA performance.",
+    "expected_pages": [
+      6,
+      18
+    ],
+    "retrieved_pages": [
+      18,
+      19,
+      18,
+      1,
+      19
+    ],
+    "page_recall": 1.0,
+    "top_score": 0.4966,
+    "avg_score": 0.382,
+    "latency_ms": 7180.8,
+    "num_sources": 10
+  },
+  {
+    "id": "q06",
+    "category": "multi-section",
+    "question": "What does the index hot-swapping experiment show, and what accuracy numbers support the conclusion?",
+    "expected_answer": "Hot-swapping the non-parametric index lets RAG update its world knowledge without any retraining. Using a matched 2016 index for 2016 world leaders RAG answered 70% correctly; using a matched 2018 index for 2018 leaders it answered 68% correctly. Accuracy with mismatched indices dropped dramatically to 12% and 4% respectively.",
+    "actual_answer": "The index hot-swapping experiment shows that the knowledge of the RAG model can be easily updated at test time by replacing its non-parametric memory index. This is demonstrated by building an index using the DrQA Wikipedia dump from December 2016 and comparing outputs from RAG using this index to the newer index from December 2018. The experiment found that RAG answers 70% correctly using the 2016 index for 2016 world leaders and 68% using the 2018 index for 2018 world leaders. However, accuracy with mismatched indices is low, with 12% with the 2018 index and 2016 leaders, and 4% with the 2016 index and 2018 leaders. These accuracy numbers support the conclusion that the RAG model's world knowledge can be updated by simply replacing its non-parametric memory.",
+    "expected_pages": [
+      7,
+      8
+    ],
+    "retrieved_pages": [
+      7,
+      7,
+      9,
+      8,
+      19
+    ],
+    "page_recall": 1.0,
+    "top_score": 0.2552,
+    "avg_score": 0.0813,
+    "latency_ms": 8862.6,
+    "num_sources": 10
+  },
+  {
+    "id": "q07",
+    "category": "adversarial",
+    "question": "What is RAG's average inference latency in milliseconds per query?",
+    "expected_answer": "The paper does not report inference latency in milliseconds. Latency is not measured or discussed anywhere in the paper.",
+    "actual_answer": "I cannot answer the question as there is no information provided in the context about RAG's average inference latency in milliseconds per query.",
+    "expected_pages": [],
+    "retrieved_pages": [
+      8,
+      8,
+      8,
+      19,
+      3
+    ],
+    "page_recall": null,
+    "top_score": 0.3222,
+    "avg_score": 0.1905,
+    "latency_ms": 17759.8,
+    "num_sources": 10
+  },
+  {
+    "id": "q08",
+    "category": "adversarial",
+    "question": "What multilingual or non-English datasets did the authors evaluate RAG on?",
+    "expected_answer": "The paper does not evaluate RAG on any multilingual or non-English datasets. All experiments use English-language benchmarks and an English Wikipedia index.",
+    "actual_answer": "The context does not mention the evaluation of RAG on multilingual or non-English datasets. The datasets mentioned, such as FEVER, Natural Questions, and TriviaQA, appear to be English-language datasets. Therefore, the answer is that the context does not provide information on the evaluation of RAG on multilingual or non-English datasets.",
+    "expected_pages": [],
+    "retrieved_pages": [
+      7,
+      8,
+      17,
+      10,
+      7
+    ],
+    "page_recall": null,
+    "top_score": 0.4158,
+    "avg_score": 0.3508,
+    "latency_ms": 13439.8,
+    "num_sources": 10
+  },
+  {
+    "id": "q09",
+    "category": "failure-mode",
+    "question": "What three limitations of parametric-only language models does the RAG paper identify in its introduction?",
+    "expected_answer": "The paper identifies three limitations: (1) they cannot easily expand or revise their memory, (2) they cannot straightforwardly provide insight into their predictions, and (3) they may produce hallucinations.",
+    "actual_answer": "The RAG paper identifies the following three limitations of parametric-only language models in its introduction:\n\n1. They cannot easily expand or revise their memory.\n2. They cannot straightforwardly provide insight into their predictions.\n3. They may produce \"hallucinations\".",
+    "expected_pages": [
+      1
+    ],
+    "retrieved_pages": [
+      1,
+      10,
+      7,
+      1,
+      18
+    ],
+    "page_recall": 1.0,
+    "top_score": 0.4422,
+    "avg_score": 0.3025,
+    "latency_ms": 9036.6,
+    "num_sources": 10
+  },
+  {
+    "id": "q10",
+    "category": "failure-mode",
+    "question": "What does the RAG abstract claim about performance on language generation tasks compared to a parametric-only seq2seq baseline?",
+    "expected_answer": "The abstract states that RAG models generate more specific, diverse, and factual language than a state-of-the-art parametric-only seq2seq baseline.",
+    "actual_answer": "The RAG abstract claims that RAG models generate more specific, diverse, and factual language than a state-of-the-art parametric-only seq2seq baseline for language generation tasks.",
+    "expected_pages": [
+      1
+    ],
+    "retrieved_pages": [
+      1,
+      1,
+      2,
+      1,
+      6
+    ],
+    "page_recall": 1.0,
+    "top_score": 0.5683,
+    "avg_score": 0.4247,
+    "latency_ms": 10089.9,
+    "num_sources": 10
+  }
+]

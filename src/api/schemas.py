@@ -3,8 +3,7 @@ from __future__ import annotations
 import hashlib
 from datetime import datetime
 from enum import Enum
-from pathlib import Path
-from typing import List, Optional
+from typing import List, Optional, Union
 from uuid import UUID
 
 from pydantic import BaseModel, Field, field_validator, model_validator
@@ -29,13 +28,22 @@ class SupportedFileType(str, Enum):
 
 # ── Sub-models ────────────────────────────────────────────────────────────────
 class SourceChunk(BaseModel):
-    """A single retrieved chunk returned with RAG answers."""
-    document_id: UUID
-    chunk_index: int = Field(..., ge=0)
-    text: str = Field(..., min_length=1)
-    score: float = Field(..., ge=0.0, le=1.0)
+    """
+    A single retrieved chunk returned with RAG answers.
+    Refactored for defensive engineering to prevent API crashes.
+    """
+    document_id: Optional[Union[UUID, str]] = None
+    chunk_index: Optional[int] = Field(default=0, ge=0)
+    text: str = Field(default="[Content missing]", min_length=1)
+    
+    # RELAXED: Score is now optional. We remove le=1.0 because 
+    # some distance metrics (like L2) can exceed 1.0.
+    score: Optional[float] = Field(default=0.0)
+    
+    # SAFE: Page numbers often fail on poorly formatted PDFs.
     page_number: Optional[int] = Field(default=None, ge=1)
-    source_file: str
+    
+    source_file: Optional[str] = Field(default="Unknown Source")
 
 
 class IngestionStats(BaseModel):
