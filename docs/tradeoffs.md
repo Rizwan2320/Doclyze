@@ -284,3 +284,91 @@ Phase 2 — when adding support for very large documents or when concurrent uplo
 Every rejected option is on a "when to revisit" list — not thrown away, just deferred until the simpler version proves insufficient.
 
 That's the engineering discipline: make the simplest thing work first, measure whether it's good enough, then add complexity only when the data demands it.
+
+
+---
+
+## 9. Chunking: RecursiveCharacterTextSplitter vs NLTK Sentence-Aware
+
+### What we chose (updated 2026-05-14)
+
+NLTK `sent_tokenize` + sentence-aware grouping for child chunks. Parent chunks still use `RecursiveCharacterTextSplitter`.
+
+### What we rejected (previous default)
+
+`RecursiveCharacterTextSplitter` with `separators=["\n\n", "\n", ". ", " ", ""]` for child chunks.
+
+### Why we changed
+
+| | RecursiveCharacterTextSplitter | NLTK Sentence-Aware |
+|---|---|---|
+| Sentence boundary guarantee | ❌ No — falls back to char truncation | ✅ Yes — pre-split by sentences |
+| Academic paper compatibility | ❌ Fails on `.\n` patterns | ✅ Handles all punctuation |
+| Implementation complexity | Low | Medium (requires NLTK dependency) |
+| Chunk size predictability | Exact | Approximate (grouped by sentences) |
+| Overlap quality | Character-based, may split sentences | Sentence-based, preserves boundaries |
+
+The old splitter cut the three-limitations sentence at "knowledge f" (mid-word) and "their predictions" (mid-sentence). This caused q09 hallucination. NLTK guarantees whole sentences, eliminating this failure mode.
+
+### What we gave up
+
+Exact chunk sizes. Sentence-aware chunks vary in size (e.g., 850-1100 chars instead of exactly 1000). This is acceptable because the variance is small and the boundary guarantee is more important.
+
+### When to revisit
+
+If chunk size variance causes embedding quality issues (very long sentences creating oversized chunks). Could switch to spaCy for better sentence segmentation, or add a max-sentence-length split.
+
+---
+
+## 10. Retrieval: Child-Only vs Parent-Only vs Hybrid
+
+### What we chose
+
+Child-only retrieval (`chunk_type="child"`) with k=10.
+
+### What we tested and rejected
+
+- **Parent-only retrieval:** Fixed q09 boundary split but triggered parametric memory override (q03 hallucinated fake paper sections). Coherent 2000-char excerpts look like "the actual paper" to the LLM, causing it to answer from training data.
+- **Child→parent hybrid:** Architecturally correct (small chunks for precision, parents for context) but `store.get(ids=...)` crashed silently in our LangChain-Chroma version. Requires debugging Chroma API interaction.
+
+### Why child-only is the current default
+
+| | Child-only | Parent-only | Child→parent hybrid |
+|---|---|---|---|
+| Retrieval precision | High | Low | High |
+| Context completeness | Low | High | High |
+| Parametric memory risk | Low | High | Medium |
+| Implementation complexity | Simple | Simple | Medium |
+| Current reliability | ✅ Working | ⚠️ Triggers hallucinations | ❌ Crashes |
+
+### What we gave up
+
+Context completeness. Child chunks (600-1000 chars) may not contain full paragraphs or tables. The LLM sometimes lacks surrounding context to fully answer.
+
+### When to revisit
+
+Week 3 — implement child→parent hybrid correctly with defensive fallback. Or add a re-ranker that promotes chunks with more complete context.
+
+---
+
+## 11. Prompt Engineering: Current vs Hardened
+
+### What we chose (current)
+
+System prompt with basic constraints (no chunk tags, refuse if no answer, no filler).
+
+### What we need (pending)
+
+Explicit anti-hallucination and anti-leakage constraints:
+
+```python
+("system", """You are an expert technical research assistant.
+Your task is to answer the user's question using ONLY the provided context.
+
+CRITICAL RULES:
+1. NEVER mention the word "Chunk" or include raw "[Chunk X | Page Y]" tags.
+2. NEVER output raw mathematical notation, LaTeX, or code fragments from the context unless directly asked.
+3. If the context does not contain the answer, say EXACTLY: "I cannot answer this based on the provided document." Then STOP. Do not add any other text.
+4. Do NOT use your general knowledge. If the answer is not in the Context, you MUST refuse.
+5. Do not include introductory filler like "Based on the context..."
+""")

@@ -45,7 +45,7 @@ git clone https://github.com/Rizwan2320/Doclyze
 cd Doclyze
 uv sync
 cp .env.example .env  # add your GROQ_API_KEY
-uv run uvicorn src.main:app --reload
+
 ```
 
 Open http://localhost:8000/docs
@@ -56,3 +56,4 @@ Open http://localhost:8000/docs
 - Document isolation using per-document ChromaDB collections
 - PyMuPDF vs Unstructured for different PDF types
 - Production FastAPI patterns with Pydantic schemas
+uv run uvicorn src.main:app --reload

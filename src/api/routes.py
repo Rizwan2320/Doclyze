@@ -1,5 +1,5 @@
 from pathlib import Path
-from uuid import uuid4, UUID
+from uuid import uuid4
 import tempfile
 import time
 from typing import List, Union
@@ -42,6 +42,7 @@ async def upload_document(file: UploadFile = File(...)):
 
     logger.info(f"Upload: {file.filename} | id={document_id}")
 
+    tmp_path = None
     try:
         with tempfile.NamedTemporaryFile(delete=False, suffix=file_ext) as tmp:
             tmp.write(content)
@@ -59,7 +60,7 @@ async def upload_document(file: UploadFile = File(...)):
         raise HTTPException(status_code=500, detail=f"Ingestion failed: {str(e)}")
     finally:
         # Ensure cleanup even if ingestion fails
-        if 'tmp_path' in locals():
+        if tmp_path:
             Path(tmp_path).unlink(missing_ok=True)
 
     return UploadAcceptedResponse(
@@ -99,10 +100,10 @@ async def query_document(request: QueryRequest):
     # Defensive mapping of retrieved documents to SourceChunk schemas
     sources = []
     for i, doc in enumerate(docs):
-        # 1. Handle Scores: Fallback to 0.0 if not found or if distance isn't supported
+        # Handle Scores
         score = doc.metadata.get("relevance_score") or getattr(doc, "score", 0.0)
         
-        # 2. Handle Page Numbers: Support multiple naming conventions from different loaders
+        # Handle Page Numbers (support multiple metadata keys)
         page = (
             doc.metadata.get("page_number") or 
             doc.metadata.get("page") or 
@@ -112,8 +113,9 @@ async def query_document(request: QueryRequest):
         sources.append(
             SourceChunk(
                 document_id=request.document_id,
+                chunk_id=doc.metadata.get("chunk_id"),
                 chunk_index=i,
-                text=doc.page_content[:1000],  # Increased slightly for better context visibility
+                text=doc.page_content[:1000],
                 score=float(score) if score is not None else 0.0,
                 page_number=int(page) if page is not None else None,
                 source_file=doc.metadata.get("source", "unknown"),
@@ -137,3 +139,41 @@ async def summarize_document(document_id: str):
         raise HTTPException(status_code=500, detail=str(e))
     
     return {"summary": summary}
+
+
+@router.get("/debug/chunks/{document_id}")
+async def debug_chunks(document_id: str, limit: int = 500, offset: int = 0):
+    """Return chunks in a collection with pagination for ground-truth dataset building."""
+    from src.vectorstore.chroma import vector_store
+    
+    store = vector_store._get_vectorstore(document_id)
+    
+    # Get total count first
+    all_results = store.get()
+    total = len(all_results.get("ids", [])) if all_results else 0
+    
+    # Paginate
+    end = min(offset + limit, total)
+    
+    chunks = []
+    for i in range(offset, end):
+        try:
+            meta = all_results["metadatas"][i]
+            chunks.append({
+                "chunk_id": meta.get("chunk_id"),
+                "chunk_type": meta.get("chunk_type"),
+                "page_number": meta.get("page_number"),
+                "source": meta.get("source"),
+                "text_preview": all_results["documents"][i][:300] if all_results.get("documents") else "",
+            })
+        except (IndexError, KeyError, TypeError) as e:
+            logger.warning(f"Skipping malformed chunk at index {i}: {e}")
+            continue
+            
+    return {
+        "total": total,
+        "returned": len(chunks),
+        "offset": offset,
+        "limit": limit,
+        "chunks": chunks
+    }

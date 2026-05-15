@@ -33,6 +33,7 @@ class SourceChunk(BaseModel):
     Refactored for defensive engineering to prevent API crashes.
     """
     document_id: Optional[Union[UUID, str]] = None
+    chunk_id: Optional[str] = None
     chunk_index: Optional[int] = Field(default=0, ge=0)
     text: str = Field(default="[Content missing]", min_length=1)
     

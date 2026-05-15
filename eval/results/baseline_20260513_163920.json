@@ -1,0 +1,62 @@
+[
+  {
+    "id": "q01",
+    "category": "factual",
+    "question": "What two model variants does RAG introduce?",
+    "error": "500 Server Error: Internal Server Error for url: http://localhost:8000/api/query"
+  },
+  {
+    "id": "q02",
+    "category": "factual",
+    "question": "Which pre-trained seq2seq model does RAG use as its generator component?",
+    "error": "500 Server Error: Internal Server Error for url: http://localhost:8000/api/query"
+  },
+  {
+    "id": "q03",
+    "category": "factual",
+    "question": "How many documents does Wikipedia get split into for RAG's non-parametric memory index?",
+    "error": "500 Server Error: Internal Server Error for url: http://localhost:8000/api/query"
+  },
+  {
+    "id": "q04",
+    "category": "multi-section",
+    "question": "How does RAG-Sequence compare to BART on the MS-MARCO and Jeopardy question generation tasks, and what human evaluation evidence supports this?",
+    "error": "500 Server Error: Internal Server Error for url: http://localhost:8000/api/query"
+  },
+  {
+    "id": "q05",
+    "category": "multi-section",
+    "question": "What is the total number of trainable parameters in a RAG model, and how does this compare to the best closed-book baseline on Natural Questions?",
+    "error": "500 Server Error: Internal Server Error for url: http://localhost:8000/api/query"
+  },
+  {
+    "id": "q06",
+    "category": "multi-section",
+    "question": "What does the index hot-swapping experiment show, and what accuracy numbers support the conclusion?",
+    "error": "500 Server Error: Internal Server Error for url: http://localhost:8000/api/query"
+  },
+  {
+    "id": "q07",
+    "category": "adversarial",
+    "question": "What is RAG's average inference latency in milliseconds per query?",
+    "error": "500 Server Error: Internal Server Error for url: http://localhost:8000/api/query"
+  },
+  {
+    "id": "q08",
+    "category": "adversarial",
+    "question": "What multilingual or non-English datasets did the authors evaluate RAG on?",
+    "error": "500 Server Error: Internal Server Error for url: http://localhost:8000/api/query"
+  },
+  {
+    "id": "q09",
+    "category": "failure-mode",
+    "question": "What three limitations of parametric-only language models does the RAG paper identify in its introduction?",
+    "error": "500 Server Error: Internal Server Error for url: http://localhost:8000/api/query"
+  },
+  {
+    "id": "q10",
+    "category": "failure-mode",
+    "question": "What does the RAG abstract claim about performance on language generation tasks compared to a parametric-only seq2seq baseline?",
+    "error": "500 Server Error: Internal Server Error for url: http://localhost:8000/api/query"
+  }
+]

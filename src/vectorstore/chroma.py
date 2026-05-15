@@ -9,7 +9,6 @@ from src.embeddings.model import embeddings
 
 
 class VectorStore:
-
     def __init__(self):
         self.persist_dir = settings.CHROMA_PERSIST_DIR
         self.embeddings = embeddings
@@ -36,18 +35,41 @@ class VectorStore:
         self, query: str, k: int = 10, collection_name: str = "default"
     ):
         store = self._get_vectorstore(collection_name)
-        results = store.similarity_search_with_relevance_scores(
-               query,
-               k=k,
-               filter={"chunk_type": {"$eq": "child"}}
-        )
+        
+        try:
+            results = store.similarity_search_with_relevance_scores(
+                query,
+                k=k,
+                filter={"chunk_type": {"$eq": "child"}}
+            )
+        except Exception as e:
+            logger.error(f"Similarity search failed for '{query[:50]}...': {e}")
+            return []
 
         docs = []
-        for item in results:
-            doc, score = item[0], item[1]  # safe unpack regardless of tuple length
-            doc.metadata["relevance_score"] = round(score, 4)
-            docs.append(doc)
+        for i, item in enumerate(results):
+            try:
+                # Handle both tuple and list formats defensively
+                if isinstance(item, (tuple, list)) and len(item) >= 2:
+                    doc, score = item[0], item[1]
+                else:
+                    logger.warning(f"Unexpected result format at index {i}: {type(item)}")
+                    continue
+                
+                if doc is None:
+                    logger.warning(f"Null document at index {i}")
+                    continue
+                    
+                doc.metadata["relevance_score"] = round(float(score), 4)
+                docs.append(doc)
+                
+            except Exception as e:
+                logger.warning(f"Failed to process result at index {i}: {e}")
+                continue
+            
+        logger.info(f"Retrieved {len(docs)} documents for query")
         return docs
 
 
+# Global instance
 vector_store = VectorStore()
