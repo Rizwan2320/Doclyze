@@ -88,3 +88,32 @@ appearing raw in answers). Multi-column layout causes reading order issues.
 **Root cause:** LLM parametric memory confusion. Paper says BERT query+doc = 110M each but doc encoder is frozen (not trained). LLM invented an extra 110M from vague memory of BERT architecture.  
 **Severity:** Low — answer is directionally correct but numerically inflated.  
 **Status:** Documented — may improve with stronger "use ONLY context" prompt constraints.
+
+
+## FM-010 — Reference Section Contamination in Vector Store
+
+**Date:** 2026-05-23
+**Symptom:** q01, q02 returned chunk_precision=0.00, chunk_recall=0.00 
+across multiple baselines despite correct content existing in the paper.
+
+**Root cause:** PyMuPDF extracted all 19 pages including reference pages 
+10–16. These bibliography chunks contain domain vocabulary identical to 
+content — BART, DPR, RAG, retrieval, seq2seq — so MiniLM scored them as 
+semantically similar to queries. Content chunks on pages 3–6 were outranked 
+by reference noise.
+
+**Why it wasn't caught earlier:** Chunk P/R only measures whether expected 
+IDs appeared in results. It doesn't show WHAT was retrieved instead. No 
+observability into retrieval content = silent contamination.
+
+**Fix:** Added _is_reference_chunk() filter in chunker.py. Two rules:
+- Rule A: >25% of lines start with [N] pattern
+- Rule B: 3+ lines start with [N] AND academic URLs present
+Pages 10–16 removed. Pages 1–9 and 17–19 preserved.
+
+**Validated:** 19 pages → 12 pages, 81 child chunks → 59 child chunks.
+Pages 5, 6 (results tables) confirmed present after fix.
+
+**Lesson:** Filter noise at ingestion time, not at query time. 
+Garbage in the vector store cannot be compensated by better retrieval.
+**Status:** ✅ Resolved

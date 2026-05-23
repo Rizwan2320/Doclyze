@@ -121,3 +121,50 @@ quality — not addressable by prompt engineering alone.
 ### Next Baseline
 
 After prompt hardening + metric fix, re-run and record as Baseline 1.1. After Week 2 hybrid search, record as Baseline 2.0.
+
+
+
+
+## Baseline 1.3-clean
+**Date:** 2026-05-23
+**Commit:** [tag this]
+**Model:** llama-3.3-70b-versatile (Groq)
+**Embeddings:** sentence-transformers/all-MiniLM-L6-v2 (384d)
+**Vector DB:** ChromaDB — clean collection, reference pages 10-16 removed
+**Chunking:** NLTK sentence-aware child (~1000 chars) + parent (2000 chars)
+**Retrieval:** Child-only, k=10, cosine similarity
+**Gold dataset:** 10 questions, manually curated expected chunk IDs (manual_patch_v2)
+
+### Per-Question Results
+| ID  | Category      | Chunk P | Chunk R | hit@1 | pos  | Latency  |
+|-----|---------------|---------|---------|-------|------|----------|
+| q01 | factual       | 0.00    | 0.00    | 0     | None | 433ms    |
+| q02 | factual       | 0.00    | 0.00    | 0     | None | 326ms    |
+| q03 | factual       | 0.10    | 1.00    | 0     | 3    | 257ms    |
+| q04 | multi-section | 0.20    | 0.67    | 1     | 1    | 1528ms   |
+| q05 | multi-section | 0.20    | 1.00    | 1     | 1    | 6507ms   |
+| q06 | multi-section | 0.10    | 0.50    | 0     | 2    | 14673ms  |
+| q07 | adversarial   | —       | —       | —     | —    | 12397ms  |
+| q08 | adversarial   | —       | —       | —     | —    | 12518ms  |
+| q09 | failure-mode  | 0.00    | 0.00    | 0     | None | 12296ms  |
+| q10 | failure-mode  | 0.10    | 1.00    | 1     | 1    | 12407ms  |
+
+### Key Signals
+- q01, q02, q09: zero recall — MiniLM embedding ceiling confirmed
+- q03, q05, q10: perfect recall — retrieval works when semantics match
+- q04, q06: partial recall — multi-section queries partially working
+- q07, q08: clean refusal — adversarial behavior correct
+- q01: retrieval failed but answer likely correct via parametric memory (FM-003 risk)
+- q02: math leakage (FM-006) — wrong chunks → LLM echoed notation
+- q09: false refusal (FM-008) — retrieval failed → prompt refused
+
+### What This Baseline Justifies
+- Embedding bakeoff (bge-small-en-v1.5) is the justified next step
+- q01, q02, q09 zero recall cannot be fixed by prompt or chunking changes
+- RAGAS needed to catch FM-003 (parametric memory override) on q01
+
+### Note on Previous Baselines
+Baselines 1.0 and 1.2 are NOT comparable to this baseline.
+They were measured against a polluted collection (reference chunks pages 10-16 included)
+and inflated gold dataset (page-fallback expected sets).
+This is the first baseline with a trustworthy ruler.

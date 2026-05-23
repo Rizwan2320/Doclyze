@@ -2,15 +2,15 @@
   {
     "id": "q01",
     "category": "factual",
-    "document_id": "93c63b64-e6f7-4fb4-b8c7-5a69ec168e9c",
+    "document_id": "06a382d4-c820-44be-ae55-9194d01ea2a0",
     "question": "What two model variants does RAG introduce?",
     "expected_answer": "RAG-Sequence and RAG-Token. RAG-Sequence uses the same retrieved document to generate the complete output sequence, while RAG-Token can use a different retrieved document for each output token.",
     "source_pages": [
       3
     ],
     "expected_chunk_ids": [
-      "7f843cd0-9cf6-4845-bdee-7df712b9e90d",
-      "534af62f-2906-4b72-a1d2-4443e38de66a"
+      "e0eb115b-a71a-4463-93f1-54f6e15b8fc2",
+      "f0830cda-bf7c-44c5-981f-15b81ab3412d"
     ],
     "expected_retrieved_chunk_count": 2,
     "notes": "Explicitly named and defined in Section 2.1. A retrieval system should find this in a single chunk.",
@@ -19,7 +19,7 @@
       "0f12fb5c-9b4b-4677-bc24-d4e3c1e4c323",
       "0aec33ab-54ec-44c5-a4ee-bc36de5e209b"
     ],
-    "_match_method": "text",
+    "_match_method": "manual_patch_v2",
     "_search_phrases": [
       "RAG-Sequence uses the same retrieved document to generate the complete output sequence, while RAG-Token can use a different retrieved document for each output token.",
       "RAG-Sequence and RAG-Token"
@@ -28,28 +28,21 @@
   {
     "id": "q02",
     "category": "factual",
-    "document_id": "93c63b64-e6f7-4fb4-b8c7-5a69ec168e9c",
+    "document_id": "06a382d4-c820-44be-ae55-9194d01ea2a0",
     "question": "Which pre-trained seq2seq model does RAG use as its generator component?",
     "expected_answer": "BART-large, a pre-trained seq2seq transformer with 400M parameters.",
     "source_pages": [
       3
     ],
     "expected_chunk_ids": [
-      "40e1953c-d04f-4627-a81a-5bfc1e0c5e08",
-      "35a2432b-760a-4302-a56e-3b0efea8b6ac",
-      "1fe72570-d80b-4999-bdc6-d33a033c0244",
-      "7f843cd0-9cf6-4845-bdee-7df712b9e90d",
-      "6d945694-61b2-4d85-8c1a-989f5615e3b7",
-      "7bb5e71b-f621-4fb6-8c8f-e437d3633270",
-      "5cc00477-b4de-4a25-8d45-7b113d792799",
-      "534af62f-2906-4b72-a1d2-4443e38de66a"
+      "9f6a821f-7110-483b-983e-f8a271b9344c"
     ],
-    "expected_retrieved_chunk_count": 8,
+    "expected_retrieved_chunk_count": 1,
     "notes": "Stated directly in Section 2.3. Tests whether the generator component chunk is retrieved over the retriever chunk.",
     "_old_chunk_ids": [
       "76d140f3-17e0-441b-8dcf-bb1c35b258e9"
     ],
-    "_match_method": "page",
+    "_match_method": "manual_patch_v2",
     "_search_phrases": [
       "BART-large, a pre-trained seq2seq transformer with 400M parameters."
     ]
@@ -57,30 +50,21 @@
   {
     "id": "q03",
     "category": "factual",
-    "document_id": "93c63b64-e6f7-4fb4-b8c7-5a69ec168e9c",
+    "document_id": "06a382d4-c820-44be-ae55-9194d01ea2a0",
     "question": "How many documents does Wikipedia get split into for RAG's non-parametric memory index?",
     "expected_answer": "21 million documents. Each Wikipedia article is split into disjoint 100-word chunks.",
     "source_pages": [
       4
     ],
     "expected_chunk_ids": [
-      "1840fb7e-cb3d-4b3e-b4ae-7d17dd53d94e",
-      "c74952c7-464d-4f63-abe0-45f5f27abe8c",
-      "e3a77990-5705-42e0-a85d-b49f8b613437",
-      "35ae9e39-f253-463c-ab5f-ed46c8ec9600",
-      "9c968481-42aa-4690-9b50-cdaeb4d2826e",
-      "896e269c-3479-42de-9ab6-85763f1bd800",
-      "5a59e1f5-d3eb-4399-98d6-41bff97a0821",
-      "e0766460-6067-4d43-ac60-38cfcfe2d24a",
-      "38cec1de-3c4e-44ff-8455-664d14d3fe3e",
-      "3f050c90-116a-4bef-b631-f29a24b79c82"
+      "7b6beee8-feea-4d1f-a7e4-7b70b3ffebcf"
     ],
-    "expected_retrieved_chunk_count": 10,
+    "expected_retrieved_chunk_count": 1,
     "notes": "Concrete numeric fact in Section 3. Easy to verify, good precision test. Chunk contains index construction details via FAISS.",
     "_old_chunk_ids": [
       "a88010fb-770f-4cef-9121-8ea68c968893"
     ],
-    "_match_method": "page",
+    "_match_method": "manual_patch_v2",
     "_search_phrases": [
       "Each Wikipedia article is split into disjoint 100-word chunks.",
       "21 million documents"
@@ -89,7 +73,7 @@
   {
     "id": "q04",
     "category": "multi-section",
-    "document_id": "93c63b64-e6f7-4fb4-b8c7-5a69ec168e9c",
+    "document_id": "06a382d4-c820-44be-ae55-9194d01ea2a0",
     "question": "How does RAG-Sequence compare to BART on the MS-MARCO and Jeopardy question generation tasks, and what human evaluation evidence supports this?",
     "expected_answer": "On MS-MARCO, RAG-Sequence outperforms BART by 2.6 BLEU and 2.6 Rouge-L points. On Jeopardy question generation, both RAG variants outperform BART on Q-BLEU-1. Human evaluators found RAG more factual than BART in 42.7% of cases vs. only 7.1% where BART was more factual, and more specific by a large margin.",
     "source_pages": [
@@ -97,30 +81,17 @@
       8
     ],
     "expected_chunk_ids": [
-      "82436c5b-626d-4f3a-851f-03915178decf",
-      "6a4d1c07-d230-4e50-ba2f-7ace98a2642d",
-      "b232b8c6-dac7-42e6-9d43-b01b11b73674",
-      "a9fe2ae5-c5f9-459f-ab63-d1a6030ab826",
-      "263e8324-6a67-450f-bf59-cb7ae62c0c91",
-      "2dac208a-372d-4a9b-9639-c3529db20751",
-      "5ad35350-870e-4535-a1b7-54a15fe0160e",
-      "164b0747-36d0-4b25-80f5-6acaf814cd05",
-      "79ea0c64-b6f0-4085-a590-08612c02675f",
-      "c1c23c82-bee6-4092-868b-019cf813a9b3",
-      "c9bcec74-4aff-462c-baf5-bcb2fdad7e95",
-      "74e84848-dcb7-4d7c-bf75-dbfcd909689a",
-      "f87b90ad-9c71-4c13-8c19-ca0d73a420af",
-      "9df31f84-24ae-43b6-a2a4-a2071f1bea59",
-      "a8290e17-5510-4ace-89db-85195be0200b",
-      "2f8b3a3c-26be-4213-807b-f4900d8477d7"
+      "8a25ee07-d47b-43a9-8b2d-ea934696f5c6",
+      "717cc58d-3388-4a4b-afa3-c3cf08318ac3",
+      "af4aaec5-ad42-43c7-9317-39d5bb973c6e"
     ],
-    "expected_retrieved_chunk_count": 16,
+    "expected_retrieved_chunk_count": 3,
     "notes": "Requires combining quantitative results from Table 2 (p.6) with human evaluation results from Table 4 (p.8). Classic multi-chunk reasoning test.",
     "_old_chunk_ids": [
       "d0ba418f-804f-4375-89b7-244eb669c796",
       "01197fe8-d659-4b14-98f1-38953ea82e5a"
     ],
-    "_match_method": "page",
+    "_match_method": "manual_patch_v2",
     "_search_phrases": [
       "On Jeopardy question generation, both RAG variants outperform BART on Q-BLEU-1",
       "On MS-MARCO, RAG-Sequence outperforms BART by 2.6 BLEU and 2.6 Rouge-L points",
@@ -130,7 +101,7 @@
   {
     "id": "q05",
     "category": "multi-section",
-    "document_id": "93c63b64-e6f7-4fb4-b8c7-5a69ec168e9c",
+    "document_id": "06a382d4-c820-44be-ae55-9194d01ea2a0",
     "question": "What is the total number of trainable parameters in a RAG model, and how does this compare to the best closed-book baseline on Natural Questions?",
     "expected_answer": "According to Appendix G, RAG has a total of 626M trainable parameters: 110M from the BERT-base query encoder and 406M from BART-large (the document encoder is not trained). The paper explicitly states this 626M figure. The best closed-book model, T5-11B, has 11 billion parameters but achieves only 36.6 EM on Natural Questions with SSM pre-training, well below RAG-Sequence's 44.5 EM reported in Table 1.",
     "source_pages": [
@@ -138,34 +109,16 @@
       18
     ],
     "expected_chunk_ids": [
-      "82436c5b-626d-4f3a-851f-03915178decf",
-      "6a4d1c07-d230-4e50-ba2f-7ace98a2642d",
-      "b232b8c6-dac7-42e6-9d43-b01b11b73674",
-      "a9fe2ae5-c5f9-459f-ab63-d1a6030ab826",
-      "263e8324-6a67-450f-bf59-cb7ae62c0c91",
-      "2dac208a-372d-4a9b-9639-c3529db20751",
-      "5ad35350-870e-4535-a1b7-54a15fe0160e",
-      "1733cb9c-36c3-47c1-be6f-c6c8644e5330",
-      "e4cd1f2f-149b-46da-9a55-85f8b4473cec",
-      "940d59c2-ea6d-4438-878e-df096c195959",
-      "811504a8-8a66-4d8c-a071-c191d8a837ff",
-      "ef7907ab-9f89-42be-bd92-a34ed9bfb2b0",
-      "fa33ce20-87c1-4e14-bf24-4ae8e24b361c",
-      "dd0e028e-18b8-45dd-82c7-38c127ef0a1f",
-      "74e84848-dcb7-4d7c-bf75-dbfcd909689a",
-      "f87b90ad-9c71-4c13-8c19-ca0d73a420af",
-      "9df31f84-24ae-43b6-a2a4-a2071f1bea59",
-      "dfb8389f-e84a-4fe3-aac3-080ebf52da9b",
-      "d497945b-8410-4053-b564-b34a2c29e164",
-      "04a6dfe1-4117-42e0-8676-918ec5371c5e"
+      "f072aec3-7664-4805-8b67-3afe474213b9",
+      "23c80664-f8e4-4b35-b354-d0108962982d"
     ],
-    "expected_retrieved_chunk_count": 20,
+    "expected_retrieved_chunk_count": 2,
     "notes": "626M is stated verbatim in Appendix G (p.18): 'making a total of 626M trainable parameters'. NQ comparison scores are in Table 1 (p.6). Both pages required for a complete answer.",
     "_old_chunk_ids": [
       "a6083896-d13e-4be5-9c25-ccf2ab0ae292",
       "6ec809f9-06db-472d-8525-8ccc29753fd6"
     ],
-    "_match_method": "page",
+    "_match_method": "manual_patch_v2",
     "_search_phrases": [
       "The best closed-book model, T5-11B, has 11 billion parameters but achieves only 36.6 EM on Natural Questions with SSM pre-training, well below RAG-Sequence's 44.5 EM reported in Table 1.",
       "According to Appendix G, RAG has a total of 626M trainable parameters: 110M from the BERT-base query encoder and 406M from BART-large (the document encoder is not trained)",
@@ -175,7 +128,7 @@
   {
     "id": "q06",
     "category": "multi-section",
-    "document_id": "93c63b64-e6f7-4fb4-b8c7-5a69ec168e9c",
+    "document_id": "06a382d4-c820-44be-ae55-9194d01ea2a0",
     "question": "What does the index hot-swapping experiment show, and what accuracy numbers support the conclusion?",
     "expected_answer": "Hot-swapping the non-parametric index lets RAG update its world knowledge without any retraining. Using a matched 2016 index for 2016 world leaders RAG answered 70% correctly; using a matched 2018 index for 2018 leaders it answered 68% correctly. Accuracy with mismatched indices dropped dramatically to 12% and 4% respectively.",
     "source_pages": [
@@ -183,30 +136,16 @@
       8
     ],
     "expected_chunk_ids": [
-      "27883d69-53c7-4893-a7f1-1113c02df8a6",
-      "003b85fd-985d-4411-94aa-b0107aadf32c",
-      "15c7c32b-c50a-46b3-bce0-ccecbd38ffd8",
-      "8a904ea6-cf88-438e-bcce-6e842192c274",
-      "c0c0ba79-23f8-48a3-a8d1-3d8f442216d2",
-      "854ca120-2d99-496b-aaa5-ecd54d076dfe",
-      "8fecd73a-6281-4424-819f-6b7a1088cde9",
-      "164b0747-36d0-4b25-80f5-6acaf814cd05",
-      "79ea0c64-b6f0-4085-a590-08612c02675f",
-      "c1c23c82-bee6-4092-868b-019cf813a9b3",
-      "c9bcec74-4aff-462c-baf5-bcb2fdad7e95",
-      "27cdbe31-b41e-41f0-a6dd-2b2b7e0790f3",
-      "c73e3a55-798c-487e-8ae0-d3f15b824075",
-      "0c7c6885-e7ca-430c-a4d0-25b7fef67ecd",
-      "a8290e17-5510-4ace-89db-85195be0200b",
-      "2f8b3a3c-26be-4213-807b-f4900d8477d7"
+      "5e050358-0782-40b3-bb8f-92e18cff1e22",
+      "abecdbc5-7c30-4ea5-8308-331379bf2e4d"
     ],
-    "expected_retrieved_chunk_count": 16,
+    "expected_retrieved_chunk_count": 2,
     "notes": "The experiment motivation and setup straddle the p.7/p.8 boundary in Section 4.5. Both pages carry required numbers; a single-page retrieval will produce an incomplete answer.",
     "_old_chunk_ids": [
       "5902bcec-fbb7-4aaf-ba5e-c3cefc63503a",
       "708fe0f0-4696-4e93-ad5a-23cce840aa11"
     ],
-    "_match_method": "page",
+    "_match_method": "manual_patch_v2",
     "_search_phrases": [
       "Using a matched 2016 index for 2016 world leaders RAG answered 70% correctly; using a matched 2018 index for 2018 leaders it answered 68% correctly",
       "Hot-swapping the non-parametric index lets RAG update its world knowledge without any retraining",
@@ -216,15 +155,15 @@
   {
     "id": "q07",
     "category": "adversarial",
-    "document_id": "93c63b64-e6f7-4fb4-b8c7-5a69ec168e9c",
+    "document_id": "06a382d4-c820-44be-ae55-9194d01ea2a0",
     "question": "What is RAG's average inference latency in milliseconds per query?",
     "expected_answer": "The paper does not report inference latency in milliseconds. Latency is not measured or discussed anywhere in the paper.",
     "source_pages": [],
     "expected_chunk_ids": [],
     "expected_retrieved_chunk_count": 0,
-    "notes": "True absence: no correct page exists. Empty source_pages is the ground-truth signal for the eval harness — any non-zero retrieved chunk count is a retrieval false-positive. A hallucinating system will invent a number.",
+    "notes": "True absence: no correct page exists. Empty source_pages is the ground-truth signal for the eval harness \u2014 any non-zero retrieved chunk count is a retrieval false-positive. A hallucinating system will invent a number.",
     "_old_chunk_ids": [],
-    "_match_method": "none",
+    "_match_method": "manual_patch_v2",
     "_search_phrases": [
       "The paper does not report inference latency in milliseconds",
       "Latency is not measured or discussed anywhere in the paper."
@@ -233,15 +172,15 @@
   {
     "id": "q08",
     "category": "adversarial",
-    "document_id": "93c63b64-e6f7-4fb4-b8c7-5a69ec168e9c",
+    "document_id": "06a382d4-c820-44be-ae55-9194d01ea2a0",
     "question": "What multilingual or non-English datasets did the authors evaluate RAG on?",
     "expected_answer": "The paper does not evaluate RAG on any multilingual or non-English datasets. All experiments use English-language benchmarks and an English Wikipedia index.",
     "source_pages": [],
     "expected_chunk_ids": [],
     "expected_retrieved_chunk_count": 0,
-    "notes": "True absence: no correct page exists. Empty source_pages is the ground-truth signal — same reasoning as q07. Distinct from q07 in that a retriever may surface the experiments section and misfire on dataset names.",
+    "notes": "True absence: no correct page exists. Empty source_pages is the ground-truth signal \u2014 same reasoning as q07. Distinct from q07 in that a retriever may surface the experiments section and misfire on dataset names.",
     "_old_chunk_ids": [],
-    "_match_method": "none",
+    "_match_method": "manual_patch_v2",
     "_search_phrases": [
       "All experiments use English-language benchmarks and an English Wikipedia index.",
       "The paper does not evaluate RAG on any multilingual or non-English datasets"
@@ -250,27 +189,21 @@
   {
     "id": "q09",
     "category": "failure-mode",
-    "document_id": "93c63b64-e6f7-4fb4-b8c7-5a69ec168e9c",
+    "document_id": "06a382d4-c820-44be-ae55-9194d01ea2a0",
     "question": "What three limitations of parametric-only language models does the RAG paper identify in its introduction?",
     "expected_answer": "The paper identifies three limitations: (1) they cannot easily expand or revise their memory, (2) they cannot straightforwardly provide insight into their predictions, and (3) they may produce hallucinations.",
     "source_pages": [
       1
     ],
     "expected_chunk_ids": [
-      "4db5c568-3dc6-4838-9347-2273249fbebf",
-      "496c3ef3-469f-4df8-8c99-fc3293ce95a5",
-      "09723224-6cc3-4a89-aa3a-b463be92eef7",
-      "53760987-27e5-477e-832d-142726885ab0",
-      "6e4ef1e7-f1fa-4cfc-85c5-202b78adffe2",
-      "9f8cc0aa-afb9-463b-aaad-cbc885463d7f",
-      "5cbf0aaf-002d-4d98-9d4b-eec703f4b66b"
+      "51f4fbba-4ab6-44cc-b88f-c4599120c313"
     ],
-    "expected_retrieved_chunk_count": 7,
+    "expected_retrieved_chunk_count": 1,
     "notes": "All three limitations are in a single dense sentence in the Introduction (p.1). Retrieval systems that skip or merge the abstract/intro block will miss this; the known failure mode the category is designed to expose.",
     "_old_chunk_ids": [
       "213ab196-aed3-4926-bcb2-8d898eff72af"
     ],
-    "_match_method": "page",
+    "_match_method": "manual_patch_v2",
     "_search_phrases": [
       "The paper identifies three limitations: (1) they cannot easily expand or revise their memory, (2) they cannot straightforwardly provide insight into their predictions, and (3) they may produce hallucinations."
     ]
@@ -278,27 +211,21 @@
   {
     "id": "q10",
     "category": "failure-mode",
-    "document_id": "93c63b64-e6f7-4fb4-b8c7-5a69ec168e9c",
+    "document_id": "06a382d4-c820-44be-ae55-9194d01ea2a0",
     "question": "What does the RAG abstract claim about performance on language generation tasks compared to a parametric-only seq2seq baseline?",
     "expected_answer": "The abstract states that RAG models generate more specific, diverse, and factual language than a state-of-the-art parametric-only seq2seq baseline.",
     "source_pages": [
       1
     ],
     "expected_chunk_ids": [
-      "4db5c568-3dc6-4838-9347-2273249fbebf",
-      "496c3ef3-469f-4df8-8c99-fc3293ce95a5",
-      "09723224-6cc3-4a89-aa3a-b463be92eef7",
-      "53760987-27e5-477e-832d-142726885ab0",
-      "6e4ef1e7-f1fa-4cfc-85c5-202b78adffe2",
-      "9f8cc0aa-afb9-463b-aaad-cbc885463d7f",
-      "5cbf0aaf-002d-4d98-9d4b-eec703f4b66b"
+      "a4efb778-dfca-4b19-9079-71b44a8357a7"
     ],
-    "expected_retrieved_chunk_count": 7,
+    "expected_retrieved_chunk_count": 1,
     "notes": "Answer lives exclusively in the abstract (p.1). Dense retrievers rank body text higher than abstracts; this directly targets that failure mode.",
     "_old_chunk_ids": [
       "8ee10a0a-1dc7-4414-a257-498ff5ea8f6f"
     ],
-    "_match_method": "page",
+    "_match_method": "manual_patch_v2",
     "_search_phrases": [
       "The abstract states that RAG models generate more specific, diverse, and factual language than a state-of-the-art parametric-only seq2seq baseline."
     ]

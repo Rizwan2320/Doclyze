@@ -43,8 +43,8 @@ class Settings(BaseSettings):
     )
 
     # ── Ingestion / Chunking defaults ────────────────────────────────────────────
-    CHUNK_SIZE: int = Field(default=800, ge=100, le=2000)
-    CHUNK_OVERLAP: int = Field(default=150, ge=0, le=500)
+    CHUNK_SIZE: int = Field(default=1000, ge=100, le=2000)
+    CHUNK_OVERLAP: int = Field(default=200, ge=0, le=500)
 
     # ── Logging & observability ──────────────────────────────────────────────────
     LOG_LEVEL: Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"] = "INFO"

@@ -57,3 +57,5 @@ Open http://localhost:8000/docs
 - PyMuPDF vs Unstructured for different PDF types
 - Production FastAPI patterns with Pydantic schemas
 uv run uvicorn src.main:app --reload
+
+source .venv/bin/activate

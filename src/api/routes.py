@@ -164,7 +164,7 @@ async def debug_chunks(document_id: str, limit: int = 500, offset: int = 0):
                 "chunk_type": meta.get("chunk_type"),
                 "page_number": meta.get("page_number"),
                 "source": meta.get("source"),
-                "text_preview": all_results["documents"][i][:300] if all_results.get("documents") else "",
+                "text_preview": all_results["documents"][i][:1000] if all_results.get("documents") else "",
             })
         except (IndexError, KeyError, TypeError) as e:
             logger.warning(f"Skipping malformed chunk at index {i}: {e}")
